@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/Images/Fav-icon.png" type="image/x-icon">
+<script src="https://kit.fontawesome.com/7433d3320f.js" crossorigin="anonymous"></script>
+<title>ID Card Generator</title>
+<link rel="stylesheet" href="idcard.css">
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <h2>ID CARD</h2>
+        <form id="inputForm">
+            <div class="form-group">
+                <label for="inputName">Name:</label>
+                <input type="text" id="inputName" name="inputName" required>
+            </div>
+            <div class="form-group">
+                <label for="inputPosition">Position:</label>
+                <select id="inputPosition" name="inputPosition" required>
+                    <option value="">Select Job Title</option>
+                    <option value="manager">Manager</option>
+                    <option value="developer">Developer</option>
+                    <option value="tester">Tester</option>
+                    <option value="intern">Intern</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="inputEmpID">Employee ID:</label>
+                <input type="text" id="inputEmpID" name="inputEmpID" required>
+            </div>
+            <div class="form-group">
+                <label for="inputBloodGroup">Blood Group:</label>
+                <select id="inputBloodGroup" name="inputBloodGroup" required>
+                    <option value="">Select Blood Group</option>
+                    <option value="O+">O+</option>
+                    <option value="A+">A+</option>
+                    <option value="B+">B+</option>
+                    <option value="AB+">AB+</option>
+                    <option value="O-">O-</option>
+                    <option value="A-">A-</option>
+                    <option value="B-">B-</option>
+                    <option value="AB-">AB-</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="inputEmergency">Emergency #:</label>
+                <input type="text" id="inputEmergency" name="inputEmergency" required>
+            </div>
+            <div class="form-group">
+                <label for="inputImage">Profile Picture:</label>
+                <input type="file" id="inputImage" name="inputImage" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Generate ID Card</button>
+            </div>
+        </form>
+    </div>
+    <div id="idCard" class="id-card" style="display: none;">
+        <img src="" alt="Profile Picture" id="profilePic">
+        <div class="details">
+            <h3 id="name">Name:</h3>
+            <h3 id="position">Position:</h3>
+            <h3 id="empID">Employee ID:</h3>
+            <h3 id="bloodGroup">Blood Group:</h3>
+            <h3 id="emergency">Emergency#:</h3>
+        </div>
+        <div class="d">
+            <hr class="hr">
+        </div>
+        <!-- Additional content -->
+        <div>
+            <h5 class="bold">IP Core Solutions (India) Private Limited</h5>
+        </div>
+        <div class="img"> 
+            <div class="img1">
+                <img src="./Images/output.jpg" alt="Logo" id="logo">
+            </div>
+            <div>
+                <ul class="u1">
+                <li class="add">A.S.R.HOUSE,</li> 
+                <li class="add">#6-3-668/10/4,</li> 
+                <li class="add"> Hyderabad - 500082</li>
+                <li class="add">Tel:+91 9700521561</li>
+                <li class="add1">www.ipcoresolutionsindia.com</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button id="downloadBtn" style="display: none;">Download ID Card</button>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>    
+
+    <script>
+    document.getElementById('inputForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var name = document.getElementById('inputName').value;
+        var position = document.getElementById('inputPosition').value;
+        var empID = document.getElementById('inputEmpID').value;
+        var bloodGroup = document.getElementById('inputBloodGroup').value;
+        var emergency = document.getElementById('inputEmergency').value;
+        var image = document.getElementById('inputImage').files[0];
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var profilePic = document.getElementById('profilePic');
+            profilePic.src = e.target.result;
+
+            generateIDCard(name, position, empID, bloodGroup, emergency, profilePic);
+        }
+        reader.readAsDataURL(image);
+    });
+
+    function generateIDCard(name, position, empID, bloodGroup, emergency, profilePic) {
+        document.getElementById('name').innerHTML = "Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: " + name;
+document.getElementById('position').innerHTML = "Position&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: " + position;
+document.getElementById('empID').innerHTML = "Employee ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: " + empID;
+document.getElementById('bloodGroup').innerHTML = "Blood Group&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: " + bloodGroup;
+document.getElementById('emergency').innerHTML = "Emergency#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:+91" + emergency;
+        var card = document.getElementById('idCard');
+        card.style.display = "block";
+
+        var downloadBtn = document.getElementById('downloadBtn');
+        downloadBtn.style.display = "block";
+
+        downloadBtn.onclick = function() {
+            const form = document.getElementById("idCard");
+            var opt = {
+                margin: 0,
+                filename: 'IDCARD.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 1 },
+                jsPDF: { unit: 'mm', format: [165, 110] } 
+            };
+            html2pdf().from(form).set(opt).save();
+        };
+    }
+    </script>
+
+</body>
+</html>
